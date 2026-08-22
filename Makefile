@@ -17,7 +17,9 @@ CFLAGS += -Isrc/include -Ithird_party/libkrun/include
 KRUN_DIR ?= third_party/libkrun
 HAS_KRUN_LIB := $(wildcard $(KRUN_DIR)/target/release/libkrun.dylib $(KRUN_DIR)/target/release/libkrun.so $(KRUN_DIR)/target/release/libkrun.a $(KRUN_DIR)/libkrun.dylib $(KRUN_DIR)/libkrun.so $(KRUN_DIR)/libkrun.a)
 ifneq ($(HAS_KRUN_LIB),)
-KRUN_LDFLAGS ?= -L$(KRUN_DIR)/target/release -L$(KRUN_DIR) -lkrun
+KRUN_LDFLAGS ?= -L$(KRUN_DIR)/target/release -L$(KRUN_DIR) -lkrun -Wl,-rpath,$(KRUN_DIR)/target/release -Wl,-rpath,$(KRUN_DIR) -Wl,-rpath,.
+$(shell [ -f $(KRUN_DIR)/target/release/libkrun.dylib ] && [ ! -f $(KRUN_DIR)/target/release/libkrun.2.dylib ] && ln -sf libkrun.dylib $(KRUN_DIR)/target/release/libkrun.2.dylib)
+$(shell [ -f $(KRUN_DIR)/libkrun.dylib ] && [ ! -f $(KRUN_DIR)/libkrun.2.dylib ] && ln -sf libkrun.dylib $(KRUN_DIR)/libkrun.2.dylib)
 else
 KRUN_LDFLAGS ?=
 endif
@@ -90,7 +92,7 @@ $(TEST_BIN): $(TEST_OBJS) $(LIBVIO) $(LIBVIO_NVME)
 	$(CC) $(CFLAGS) -o $@ $(TEST_OBJS) -L. -lvio -lvio-nvme $(KRUN_LDFLAGS)
 
 test: $(TEST_BIN)
-	./$(TEST_BIN)
+	DYLD_LIBRARY_PATH="$(KRUN_DIR)/target/release:$(KRUN_DIR):$$DYLD_LIBRARY_PATH" LD_LIBRARY_PATH="$(KRUN_DIR)/target/release:$(KRUN_DIR):$$LD_LIBRARY_PATH" ./$(TEST_BIN)
 
 clean:
 	rm -f $(OBJS_ALL) $(OBJS_NVME) $(OBJS_ENCLAVE) $(LIBVIO) $(LIBVIO_SO) $(LIBVIO_NVME) $(LIBVIO_ENCLAVE) $(TEST_OBJS) $(TEST_BIN)
