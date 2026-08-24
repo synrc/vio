@@ -4,6 +4,7 @@ extern void run_queue_tests(void);
 extern void run_blk_tests(void);
 extern void run_nvme_tests(void);
 extern void run_krun_tests(void);
+extern void run_gpu_tests(void);
 
 /*
 libvio gives you a zero-dependency, TRON real-time discipline poll-mode VirtIO/NVMe library
@@ -23,6 +24,7 @@ int main(void) {
     run_blk_tests();
     run_nvme_tests();
     run_krun_tests();
+    run_gpu_tests();
     
     TEST_SUMMARY();
     return 0;

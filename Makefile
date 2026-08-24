@@ -40,7 +40,8 @@ SRCS_DEV  = src/devices/blk.c \
             src/devices/net.c \
             src/devices/console.c \
             src/devices/crypto.c \
-            src/devices/bus.c
+            src/devices/bus.c \
+            src/devices/gpu.c
 
 # We link a null backend and libkrun platform by default
 SRCS_BACKEND = src/backend/null.c \
@@ -84,7 +85,7 @@ $(LIBVIO_ENCLAVE): $(OBJS_ENCLAVE)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Testing
-TEST_SRCS = test/main.c test/queue_test.c test/blk_test.c test/nvme_loopback.c test/krun_test.c
+TEST_SRCS = test/main.c test/queue_test.c test/blk_test.c test/nvme_loopback.c test/krun_test.c test/gpu_test.c
 TEST_OBJS = $(TEST_SRCS:.c=.o)
 TEST_BIN  = vio_test
 
